@@ -6,6 +6,8 @@
 <h2>{{ store.name }}</h2>
 
 <p><a href="{% url 'edit_store' store.id %}">Edit Store</a></p>
+<p><a href="{% url 'delete_store' store.id %}">Delete Store</a></p>
+
 <p><strong>Description:</strong> {{ store.description }}</p>
 <p><strong>Website:</strong> 
     {% if store.website %}

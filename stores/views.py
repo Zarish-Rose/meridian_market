@@ -47,3 +47,13 @@ def edit_store(request, store_id):
         form = StoreForm(instance=store)
 
     return render(request, 'stores/edit_store.html', {'form': form, 'store': store})
+
+@login_required
+def delete_store(request, store_id):
+    store = get_object_or_404(Store, id=store_id, owner=request.user)
+
+    if request.method == 'POST':
+        store.delete()
+        return redirect('store_list')
+
+    return render(request, 'stores/delete_store.html', {'store': store})
