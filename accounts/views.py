@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.http import HttpResponse
+from .forms import ProfileForm
 
 
 def index(request):
@@ -23,3 +24,17 @@ def register(request):
 @login_required
 def dashboard(request):
     return render(request, 'accounts/dashboard.html')
+
+@login_required
+def edit_profile(request):
+    profile = request.user.profile
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'accounts/edit_profile.html', {'form': form})
