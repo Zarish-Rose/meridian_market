@@ -26,7 +26,7 @@ exec((BASE_DIR / "env.py").read_text(), {})
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
+    'stores.apps.StoresConfig',
 ]
 
 LOGIN_REDIRECT_URL = '/accounts/dashboard/'
