@@ -1,0 +1,5 @@
+<h2>Welcome, {{ request.user.username }}!</h2>
+
+<p>Your account is active and you're logged in.</p>
+
+<a href="{% url 'logout' %}">Logout</a>
