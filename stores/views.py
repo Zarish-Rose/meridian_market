@@ -33,3 +33,17 @@ def store_detail(request, store_id):
     return render(request, 'stores/store_detail.html', {'store': store})
 
     # Owners can only access their own stores
+
+@login_required
+def edit_store(request, store_id):
+    store = get_object_or_404(Store, id=store_id, owner=request.user)
+
+    if request.method == 'POST':
+        form = StoreForm(request.POST, instance=store)
+        if form.is_valid():
+            form.save()
+            return redirect('store_detail', store_id=store.id)
+    else:
+        form = StoreForm(instance=store)
+
+    return render(request, 'stores/edit_store.html', {'form': form, 'store': store})
