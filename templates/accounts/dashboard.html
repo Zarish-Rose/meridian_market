@@ -5,9 +5,9 @@
 {% block content %}
 <h2>Welcome, {{ request.user.username }}!</h2>
 
-<p>Your account is active and you're logged in.</p>
-
-<p>Profile created: {{ request.user.profile.created_at }}</p>
+<p><strong>Name:</strong> {{ request.user.profile.full_name }}</p>
+<p><strong>Company:</strong> {{ request.user.profile.company_name }}</p>
+<p><strong>Phone:</strong> {{ request.user.profile.phone }}</p>
 
 <p><a href="{% url 'edit_profile' %}">Edit Profile</a></p>
 <a href="{% url 'logout' %}">Logout</a>
