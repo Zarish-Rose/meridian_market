@@ -10,7 +10,9 @@
 {% if stores %}
     <ul>
         {% for store in stores %}
-            <li>{{ store.name }}</li>
+            <li>
+                <a href="{% url 'store_detail' store.id %}">{{ store.name }}</a>
+            </li>
         {% endfor %}
     </ul>
 {% else %}

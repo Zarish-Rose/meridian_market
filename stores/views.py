@@ -24,3 +24,12 @@ def create_store(request):
         form = StoreForm()
 
     return render(request, 'stores/create_store.html', {'form': form})
+
+from django.shortcuts import get_object_or_404
+
+@login_required
+def store_detail(request, store_id):
+    store = get_object_or_404(Store, id=store_id, owner=request.user)
+    return render(request, 'stores/store_detail.html', {'store': store})
+
+    # Owners can only access their own stores
