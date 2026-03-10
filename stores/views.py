@@ -14,7 +14,7 @@ from .forms import StoreForm
 @login_required
 def create_store(request):
     if request.method == 'POST':
-        form = StoreForm(request.POST)
+        form = StoreForm(request.POST, request.FILES)
         if form.is_valid():
             store = form.save(commit=False)
             store.owner = request.user
@@ -39,7 +39,7 @@ def edit_store(request, store_id):
     store = get_object_or_404(Store, id=store_id, owner=request.user)
 
     if request.method == 'POST':
-        form = StoreForm(request.POST, instance=store)
+        form = StoreForm(request.POST, request.FILES, instance=store)
         if form.is_valid():
             form.save()
             return redirect('store_detail', store_id=store.id)

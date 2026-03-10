@@ -5,6 +5,13 @@
 {% block content %}
 <h2>Edit Store</h2>
 
+<form method="post" enctype="multipart/form-data">
+{% if store.logo %}
+    <p>Current Logo:</p>
+    <img src="{{ store.logo.url }}" alt="Store Logo" style="max-height: 120px;">
+{% endif %}
+</form>
+
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

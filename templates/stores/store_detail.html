@@ -8,6 +8,22 @@
 <p><a href="{% url 'edit_store' store.id %}">Edit Store</a></p>
 <p><a href="{% url 'delete_store' store.id %}">Delete Store</a></p>
 
+{% if store.logo %}
+    <img src="{{ store.logo.url }}" alt="{{ store.name }} Logo" style="max-height: 120px;">
+{% endif %}
+
+{% if store.tagline %}
+    <p><em>{{ store.tagline }}</em></p>
+{% endif %}
+
+{% if store.primary_color %}
+    <p>Primary Color: <span style="background: {{ store.primary_color }}; padding: 4px 12px; border-radius: 4px; color: white;">{{ store.primary_color }}</span></p>
+{% endif %}
+
+{% if store.accent_color %}
+    <p>Accent Color: <span style="background: {{ store.accent_color }}; padding: 4px 12px; border-radius: 4px; color: white;">{{ store.accent_color }}</span></p>
+{% endif %}
+
 <p><strong>Description:</strong> {{ store.description }}</p>
 <p><strong>Website:</strong> 
     {% if store.website %}
