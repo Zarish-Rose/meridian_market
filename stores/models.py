@@ -15,4 +15,19 @@ class Store(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+class StoreMember(models.Model):
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='members')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='store_memberships')
+    role = models.CharField(max_length=20, choices=[
+        ('staff', 'Staff Member'),
+        ('manager', 'Manager'),
+    ], default='staff')
+
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('store', 'user')
+
+    def __str__(self):
+        return f"{self.user.username} → {self.store.name}"

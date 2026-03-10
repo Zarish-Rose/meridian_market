@@ -33,6 +33,20 @@
     {% endif %}
 </p>
 
+<h3>Team Members</h3>
+
+{% if store.members.all %}
+    <ul>
+        {% for member in store.members.all %}
+            <li>{{ member.user.username }} — {{ member.get_role_display }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No team members yet.</p>
+{% endif %}
+
+<p><a href="{% url 'add_store_member' store.id %}">+ Add Team Member</a></p>
+
 <p><strong>Created:</strong> {{ store.created_at }}</p>
 
 <hr>

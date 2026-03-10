@@ -57,3 +57,22 @@ def delete_store(request, store_id):
         return redirect('store_list')
 
     return render(request, 'stores/delete_store.html', {'store': store})
+
+@login_required
+def add_store_member(request, store_id):
+    store = get_object_or_404(Store, id=store_id, owner=request.user)
+
+    if request.method == 'POST':
+        form = StoreMemberForm(request.POST)
+        if form.is_valid():
+            member = form.save(commit=False)
+            member.store = store
+            member.save()
+            return redirect('store_detail', store_id=store.id)
+    else:
+        form = StoreMemberForm()
+
+    return render(request, 'stores/add_store_member.html', {
+        'form': form,
+        'store': store
+    })
