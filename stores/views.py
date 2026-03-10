@@ -1,15 +1,27 @@
 from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from .decorators import store_access_required
 from .models import Store
+from .forms import StoreForm
 
 @login_required
 def store_list(request):
-    stores = Store.objects.filter(owner=request.user)
-    return render(request, 'stores/store_list.html', {'stores': stores})
+    user = request.user
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .forms import StoreForm
+    if user.profile.role == 'owner':
+        stores = Store.objects.filter(owner=user)
+
+    elif user.profile.role == 'staff':
+        stores = Store.objects.filter(members__user=user)
+
+    elif user.profile.role == 'admin':
+        stores = Store.objects.all()
+
+    else:
+        stores = Store.objects.none()
+
+    return render(request, 'stores/store_list.html', {'stores': stores})
 
 @login_required
 def create_store(request):
@@ -25,9 +37,8 @@ def create_store(request):
 
     return render(request, 'stores/create_store.html', {'form': form})
 
-from django.shortcuts import get_object_or_404
-
 @login_required
+@store_access_required
 def store_detail(request, store_id):
     store = get_object_or_404(Store, id=store_id, owner=request.user)
     return render(request, 'stores/store_detail.html', {'store': store})
@@ -35,6 +46,7 @@ def store_detail(request, store_id):
     # Owners can only access their own stores
 
 @login_required
+@store_access_required
 def edit_store(request, store_id):
     store = get_object_or_404(Store, id=store_id, owner=request.user)
 
@@ -49,6 +61,7 @@ def edit_store(request, store_id):
     return render(request, 'stores/edit_store.html', {'form': form, 'store': store})
 
 @login_required
+@store_access_required
 def delete_store(request, store_id):
     store = get_object_or_404(Store, id=store_id, owner=request.user)
 
@@ -59,6 +72,7 @@ def delete_store(request, store_id):
     return render(request, 'stores/delete_store.html', {'store': store})
 
 @login_required
+@store_access_required
 def add_store_member(request, store_id):
     store = get_object_or_404(Store, id=store_id, owner=request.user)
 
