@@ -5,6 +5,8 @@
 {% block content %}
 <h2>My Stores</h2>
 
+<p><a href="{% url 'create_store' %}">+ Create New Store</a></p>
+
 {% if stores %}
     <ul>
         {% for store in stores %}
