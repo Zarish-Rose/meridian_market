@@ -15,6 +15,13 @@
         <a href="{% url 'login' %}">Login</a> |
         <a href="{% url 'register' %}">Register</a>
     {% endif %}
+    {% if request.user.profile.role == 'owner' %}
+    <a href="/shops/">My Shop</a> |
+    {% endif %}
+
+    {% if request.user.profile.role == 'admin' %}
+    <a href="/admin/">Admin Panel</a> |
+    {% endif %}
 </nav>
 
 <hr>

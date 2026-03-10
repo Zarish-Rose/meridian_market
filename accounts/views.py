@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
 from django.http import HttpResponse
 from .forms import ProfileForm
+from accounts.decorators import role_required
 
 
 def index(request):
@@ -38,3 +39,7 @@ def edit_profile(request):
         form = ProfileForm(instance=profile)
 
     return render(request, 'accounts/edit_profile.html', {'form': form})
+
+@role_required('owner')
+def shop_settings(request):
+    ...

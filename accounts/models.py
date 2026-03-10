@@ -13,3 +13,11 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.full_name or self.user.username
+    
+    ROLE_CHOICES = [
+    ('owner', 'Business Owner'),
+    ('staff', 'Staff Member'),
+    ('admin', 'Administrator'),
+    ]
+
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='owner')
