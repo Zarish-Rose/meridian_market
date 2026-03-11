@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Subscriber{% endblock %}
+
+{% block content %}
+<h2>Add Subscriber to {{ store.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Subscriber</button>
+</form>
+
+<p><a href="{% url 'subscriber_list' store.id %}">Back to Subscribers</a></p>
+{% endblock %}

@@ -7,6 +7,10 @@
 
 <p><a href="{% url 'edit_store' store.id %}">Edit Store</a></p>
 <p><a href="{% url 'delete_store' store.id %}">Delete Store</a></p>
+<p><a href="{% url 'add_store_member' store.id %}">+ Add Team Member</a></p>
+<p><a href="{% url 'subscriber_list' store.id %}">View Subscribers</a></p>
+<p><a href="{% url 'store_list' %}">Back to My Stores</a></p>
+<p><strong>Created:</strong> {{ store.created_at }}</p>
 
 {% if store.logo %}
     <img src="{{ store.logo.url }}" alt="{{ store.name }} Logo" style="max-height: 120px;">
@@ -45,11 +49,6 @@
     <p>No team members yet.</p>
 {% endif %}
 
-<p><a href="{% url 'add_store_member' store.id %}">+ Add Team Member</a></p>
-
-<p><strong>Created:</strong> {{ store.created_at }}</p>
-
 <hr>
 
-<p><a href="{% url 'store_list' %}">Back to My Stores</a></p>
 {% endblock %}

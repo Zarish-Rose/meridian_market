@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscribers — {{ store.name }}{% endblock %}
+
+{% block content %}
+<h2>Subscribers for {{ store.name }}</h2>
+
+<p><a href="{% url 'add_subscriber' store.id %}">+ Add Subscriber</a></p>
+
+{% if subscribers %}
+    <ul>
+        {% for s in subscribers %}
+            <li>{{ s.name }} — {{ s.email }} — {{ s.phone }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No subscribers yet.</p>
+{% endif %}
+
+<p><a href="{% url 'store_detail' store.id %}">Back to Store</a></p>
+{% endblock %}
