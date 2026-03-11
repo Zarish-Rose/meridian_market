@@ -1,5 +1,5 @@
 from subscribers.models import Subscriber
-from .services import send_whatsapp_message
+from .services.messaging import send_whatsapp_message
 
 def send_campaign(campaign):
     subscribers = campaign.store.subscribers.all()
