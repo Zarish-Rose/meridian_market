@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'stores.apps.StoresConfig',
     'subscribers.apps.SubscribersConfig',
+    'campaigns',
 ]
 
 LOGIN_REDIRECT_URL = '/accounts/dashboard/'
