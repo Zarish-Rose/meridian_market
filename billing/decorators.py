@@ -17,7 +17,7 @@ def subscription_required(view_func):
 stripe.UsageRecord.create(
     quantity=1,
     timestamp=int(time.time()),
-    subscription_item='si_12345',  # from Stripe
+    subscription_item=item_id,  # from Stripe
     action='increment',
 )
 

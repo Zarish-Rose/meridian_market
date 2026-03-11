@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Billing Dashboard{% endblock %}
+
+{% block content %}
+<h2>Billing Dashboard</h2>
+
+<h3>Current Plan</h3>
+<p>Plan: <strong>{{ profile.subscription_tier|title }}</strong></p>
+
+{% if profile.subscription_tier == 'free' %}
+    <p>Your free trial ends on {{ profile.trial_ends_at }}</p>
+    <a href="{% url 'pricing' %}">Upgrade Now</a>
+{% endif %}
+
+{% if subscription %}
+    <p>Status: {{ subscription.status }}</p>
+    <p>Next Billing Date: {{ subscription.current_period_end|date:"Y-m-d" }}</p>
+{% endif %}
+
+<hr>
+
+<h3>Invoices</h3>
+{% if invoices.data %}
+    <ul>
+        {% for invoice in invoices.data %}
+            <li>
+                {{ invoice.created|date:"Y-m-d" }} —
+                £{{ invoice.total|floatformat:2 }} —
+                <a href="{{ invoice.hosted_invoice_url }}" target="_blank">View</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No invoices yet.</p>
+{% endif %}
+
+<hr>
+
+<h3>Message Usage</h3>
+{% if usage %}
+    <ul>
+        {% for record in usage.data %}
+            <li>{{ record.period.start|date:"Y-m-d" }} — {{ record.total_usage }} messages</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No usage data available.</p>
+{% endif %}
+
+{% if subscription.status == 'past_due' %}
+    <p style="color:red;">Your payment failed. Please update your card.</p>
+{% endif %}
+
+{% if profile.subscription_tier == 'free' %}
+    <p>Your trial ends on {{ profile.trial_ends_at }}.</p>
+{% endif %}
+
+<hr>
+
+<h3>Manage Billing</h3>
+<a href="{% url 'billing_portal' %}">Open Stripe Billing Portal</a>
+<a href="{% url 'checkout' 'basic' %}">Switch to Basic</a>
+<a href="{% url 'checkout' 'pro' %}">Switch to Pro</a>
+
+{% endblock %}

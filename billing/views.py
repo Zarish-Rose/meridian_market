@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
 import stripe
+from datetime import datetime
 
 def create_subscription_checkout(request):
     customer = request.user.stripecustomer.stripe_customer_id
@@ -39,4 +40,41 @@ def create_checkout_session(request, tier):
         cancel_url='https://yourdomain.com/billing/cancel/',
     )
 
+    return redirect(session.url)
+
+
+def billing_dashboard(request):
+    profile = request.user.profile
+    stripe_customer = profile.stripe_customer_id
+
+    # Fetch invoices from Stripe
+    invoices = stripe.Invoice.list(customer=stripe_customer, limit=10)
+
+    # Fetch subscription details
+    subscription = None
+    if profile.stripe_subscription_id:
+        subscription = stripe.Subscription.retrieve(profile.stripe_subscription_id)
+
+    # Fetch usage (if using metered billing)
+    usage = None
+    if subscription:
+        items = subscription['items']['data']
+        for item in items:
+            if item['price']['recurring']['usage_type'] == 'metered':
+                usage = stripe.UsageRecordSummary.list(
+                    subscription_item=item['id']
+                )
+
+    return render(request, 'billing/dashboard.html', {
+        'profile': profile,
+        'subscription': subscription,
+        'invoices': invoices,
+        'usage': usage,
+    })
+
+def billing_portal(request):
+    session = stripe.billing_portal.Session.create(
+        customer=request.user.profile.stripe_customer_id,
+        return_url='https://yourdomain.com/billing/dashboard/',
+    )
     return redirect(session.url)
