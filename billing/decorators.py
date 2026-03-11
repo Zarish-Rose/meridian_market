@@ -1,8 +1,8 @@
 from time import time
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
 import stripe
 from urllib3 import request
-
 from campaigns import models
 from stores.models import Store
 
@@ -36,3 +36,15 @@ stripe.billing_portal.Session.create(
     return_url='https://yourdomain.com/dashboard/',
 )
 <a href="{% url 'billing_portal' %}">Manage Billing</a>
+
+def require_tier(min_tier):
+    tier_order = ['free', 'basic', 'pro', 'enterprise']
+
+    def decorator(view_func):
+        def wrapper(request, *args, **kwargs):
+            user_tier = request.user.profile.subscription_tier
+            if tier_order.index(user_tier) < tier_order.index(min_tier):
+                return redirect('upgrade_page')
+            return view_func(request, *args, **kwargs)
+        return wrapper
+    return decorator

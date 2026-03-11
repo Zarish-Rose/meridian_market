@@ -18,3 +18,25 @@ def create_subscription_checkout(request):
     )
 
     return redirect(session.url)
+
+def create_checkout_session(request, tier):
+    price_map = {
+        'basic': 'price_basic_monthly',
+        'pro': 'price_pro_monthly',
+    }
+
+    session = stripe.checkout.Session.create(
+        customer=request.user.profile.stripe_customer_id,
+        mode='subscription',
+        line_items=[{
+            'price': price_map[tier],
+            'quantity': 1,
+        }],
+        subscription_data={
+            'trial_period_days': 14,
+        },
+        success_url='https://yourdomain.com/billing/success/',
+        cancel_url='https://yourdomain.com/billing/cancel/',
+    )
+
+    return redirect(session.url)

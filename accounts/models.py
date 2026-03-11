@@ -21,3 +21,18 @@ class Profile(models.Model):
     ]
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='owner')
+
+    stripe_customer_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_subscription_id = models.CharField(max_length=255, blank=True, null=True)
+    subscription_tier = models.CharField(
+        max_length=20,
+        choices=[
+            ('free', 'Free Trial'),
+            ('basic', 'Basic'),
+            ('pro', 'Pro'),
+            ('enterprise', 'Enterprise'),
+        ],
+        default='free'
+    )
+    trial_ends_at = models.DateTimeField(blank=True, null=True)
+    is_subscribed = models.BooleanField(default=False)

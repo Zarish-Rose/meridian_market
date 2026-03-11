@@ -10,6 +10,21 @@
 <p><strong>Company:</strong> {{ request.user.profile.company_name }}</p>
 <p><strong>Phone:</strong> {{ request.user.profile.phone }}</p>
 
+{% if user.profile.subscription_tier == 'free' %}
+    <p>Your free trial ends on {{ user.profile.trial_ends_at }}</p>
+    <a href="{% url 'pricing' %}">Upgrade Now</a>
+{% endif %}
+
+{% if not user.profile.is_subscribed %}
+    <p>Your trial has ended. Please subscribe to continue.</p>
+{% endif %}
+
+<h2>Choose Your Plan</h2>
+<a href="{% url 'checkout' 'basic' %}">Basic — £9/mo</a>
+<a href="{% url 'checkout' 'pro' %}">Pro — £29/mo</a>
+<a href="/contact-enterprise/">Enterprise — Contact Us</a>
+
 <p><a href="{% url 'edit_profile' %}">Edit Profile</a></p>
+<a href="/contact/">Contact Sales</a>
 <a href="{% url 'logout' %}">Logout</a>
 {% endblock %}
