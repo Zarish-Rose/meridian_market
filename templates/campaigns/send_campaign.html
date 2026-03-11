@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Send Campaign{% endblock %}
+
+{% block content %}
+<h2>Send Campaign: {{ campaign.title }}</h2>
+
+<p>This will send the message to all subscribers via {{ campaign.get_message_type_display }}.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Send Now</button>
+</form>
+
+<p><a href="{% url 'campaign_list' store.id %}">Cancel</a></p>
+{% endblock %}

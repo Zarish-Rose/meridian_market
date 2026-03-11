@@ -19,6 +19,9 @@
                 {% else %}
                     <span>(Draft)</span>
                 {% endif %}
+                {% if not c.sent %}
+                <a href="{% url 'send_campaign' store.id c.id %}">Send</a>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>

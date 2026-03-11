@@ -4,6 +4,7 @@ from stores.decorators import store_access_required
 from stores.models import Store
 from .models import Campaign
 from .forms import CampaignForm
+from .utils import send_campaign
 
 @login_required
 @store_access_required
@@ -33,4 +34,19 @@ def create_campaign(request, store_id):
     return render(request, 'campaigns/create_campaign.html', {
         'store': store,
         'form': form
+    })
+
+@login_required
+@store_access_required
+def send_campaign_view(request, store_id, campaign_id):
+    store = Store.objects.get(id=store_id)
+    campaign = get_object_or_404(Campaign, id=campaign_id, store=store)
+
+    if request.method == 'POST':
+        send_campaign(campaign)
+        return redirect('campaign_list', store_id=store.id)
+
+    return render(request, 'campaigns/send_campaign.html', {
+        'store': store,
+        'campaign': campaign
     })
