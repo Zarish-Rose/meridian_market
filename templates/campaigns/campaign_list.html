@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Campaigns — {{ store.name }}{% endblock %}
+
+{% block content %}
+<h2>Campaigns for {{ store.name }}</h2>
+
+<p><a href="{% url 'create_campaign' store.id %}">+ Create Campaign</a></p>
+
+{% if campaigns %}
+    <ul>
+        {% for c in campaigns %}
+            <li>
+                <strong>{{ c.title }}</strong>
+                — {{ c.get_message_type_display }}
+                — {{ c.created_at }}
+                {% if c.sent %}
+                    <span>(Sent)</span>
+                {% else %}
+                    <span>(Draft)</span>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No campaigns yet.</p>
+{% endif %}
+
+<p><a href="{% url 'store_detail' store.id %}">Back to Store</a></p>
+{% endblock %}
