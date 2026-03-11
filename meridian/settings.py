@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts.apps.AccountsConfig',
     'stores.apps.StoresConfig',
+    'subscribers.apps.SubscribersConfig',
 ]
 
 LOGIN_REDIRECT_URL = '/accounts/dashboard/'
