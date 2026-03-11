@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Subscriber{% endblock %}
+
+{% block content %}
+<h2>Edit Subscriber — {{ subscriber.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+</form>
+
+<p><a href="{% url 'subscriber_list' store.id %}">Back to Subscribers</a></p>
+{% endblock %}

@@ -34,3 +34,38 @@ def add_subscriber(request, store_id):
         'store': store,
         'form': form
     })
+
+@login_required
+@store_access_required
+def edit_subscriber(request, store_id, subscriber_id):
+    store = Store.objects.get(id=store_id)
+    subscriber = get_object_or_404(Subscriber, id=subscriber_id, store=store)
+
+    if request.method == 'POST':
+        form = SubscriberForm(request.POST, instance=subscriber)
+        if form.is_valid():
+            form.save()
+            return redirect('subscriber_list', store_id=store.id)
+    else:
+        form = SubscriberForm(instance=subscriber)
+
+    return render(request, 'subscribers/edit_subscriber.html', {
+        'store': store,
+        'form': form,
+        'subscriber': subscriber
+    })
+
+@login_required
+@store_access_required
+def delete_subscriber(request, store_id, subscriber_id):
+    store = Store.objects.get(id=store_id)
+    subscriber = get_object_or_404(Subscriber, id=subscriber_id, store=store)
+
+    if request.method == 'POST':
+        subscriber.delete()
+        return redirect('subscriber_list', store_id=store.id)
+
+    return render(request, 'subscribers/delete_subscriber.html', {
+        'store': store,
+        'subscriber': subscriber
+    })

@@ -10,7 +10,11 @@
 {% if subscribers %}
     <ul>
         {% for s in subscribers %}
-            <li>{{ s.name }} — {{ s.email }} — {{ s.phone }}</li>
+            <li>
+                {{ s.name }} — {{ s.email }} — {{ s.phone }}
+                <a href="{% url 'edit_subscriber' store.id s.id %}">Edit</a> |
+                <a href="{% url 'delete_subscriber' store.id s.id %}">Delete</a>
+            </li>
         {% endfor %}
     </ul>
 {% else %}

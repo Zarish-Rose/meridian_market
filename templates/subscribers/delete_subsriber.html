@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Subscriber{% endblock %}
+
+{% block content %}
+<h2>Delete Subscriber</h2>
+
+<p>Are you sure you want to delete <strong>{{ subscriber.name }}</strong>?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Yes, delete</button>
+</form>
+
+<p><a href="{% url 'subscriber_list' store.id %}">Cancel</a></p>
+{% endblock %}
