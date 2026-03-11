@@ -18,6 +18,7 @@
     
     {% if request.user.profile.role == 'owner' %}
        <a href="{% url 'store_list' %}">My Stores</a> |
+       <a href="{% url 'create_subscription_checkout' %}">Subscribe Now</a>
     {% endif %}
 
     {% if request.user.profile.role == 'admin' %}
