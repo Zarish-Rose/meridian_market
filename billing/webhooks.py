@@ -1,8 +1,14 @@
-from datetime import datetime
 import stripe
-from django.http import HttpResponse
+from datetime import datetime
 from django.conf import settings
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
+from accounts.models import Profile
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+@csrf_exempt
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
@@ -11,44 +17,52 @@ def stripe_webhook(request):
         event = stripe.Webhook.construct_event(
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
         )
-    except stripe.error.SignatureVerificationError:
+    except Exception:
         return HttpResponse(status=400)
 
-    if event['type'] == 'invoice.paid':
-        # grant platform access
-        pass
 
-    if event['type'] == 'customer.subscription.deleted':
-        # revoke access
-        pass
+    # Subscription created or updated
+    if event["type"] in ["customer.subscription.created", "customer.subscription.updated"]:
+        subscription = event["data"]["object"]
+        customer_id = subscription["customer"]
+        status = subscription["status"]
+        price_id = subscription["items"]["data"][0]["price"]["id"]
 
-    if event['type'] == 'invoice.upcoming':
-        # notify user
-        pass
+        # Find the user
+        profile = Profile.objects.get(stripe_customer_id=customer_id)
 
-    if event['type'] == 'customer.subscription.created':
-        sub = event['data']['object']
-        profile = Profile.objects.get(stripe_customer_id=sub['customer'])
+        # Update your subscription model
+        stripe.Subscription.objects.update_or_create(
+            user=profile.user,
+            defaults={
+                "stripe_subscription_id": subscription["id"],
+                "status": status,
+                "price_id": price_id,
+                "current_period_end": subscription["current_period_end"],
+            }
+        )
 
-        profile.stripe_subscription_id = sub['id']
-        profile.subscription_tier = determine_tier_from_price(sub['items']['data'][0]['price']['id'])
-        profile.trial_ends_at = datetime.fromtimestamp(sub['trial_end'])
-        profile.is_subscribed = True
-        profile.save()
+    # If payment fails
+    if event["type"] == "invoice.payment_failed":
+        invoice = event["data"]["object"]
+        customer_id = invoice["customer"]
 
-    # send email reminder when trial ends
-    if event['type'] == 'customer.subscription.trial_will_end':
-        pass
+        profile = Profile.objects.get(stripe_customer_id=customer_id)
 
-    # handle failed payments
-    if event['type'] == 'invoice.payment_failed':
-        profile.is_subscribed = False
-        profile.save()
+        # Mark subscription as unpaid or past_due
+        stripe.Subscription.objects.filter(user=profile.user).update(
+            status="past_due"
+        )
+    
+    # Subscription cancellations
+    if event["type"] == "customer.subscription.deleted":
+        subscription = event["data"]["object"]
+        customer_id = subscription["customer"]
 
-    # handle subscription cancellations
-    if event['type'] == 'customer.subscription.deleted':
-        profile.is_subscribed = False
-        profile.subscription_tier = 'free'
-        profile.save()
+        profile = Profile.objects.get(stripe_customer_id=customer_id)
+
+        stripe.Subscription.objects.filter(user=profile.user).update(
+            status="canceled"
+        )
 
     return HttpResponse(status=200)
