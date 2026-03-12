@@ -1,10 +1,11 @@
 import stripe
+from datetime import datetime
+from django.urls import reverse
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.urls import reverse
-from datetime import datetime
 from billing.utils import has_enterprise, has_pro
+from accounts.models import Profile
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -42,7 +43,32 @@ def send_message(request):
 
     if not (has_pro(user) or has_enterprise(user)):
         return redirect("upgrade_page")
-    # Feature logic here        
+    # Feature logic here
+
+def billing_dashboard(request):
+    profile = request.user.profile
+    subscription = getattr(request.user, "subscription", None)
+
+    # Fetch invoices from Stripe
+    invoices = stripe.Invoice.list(customer=profile.stripe_customer_id, limit=10)
+
+    context = {
+        "subscription": subscription,
+        "invoices": invoices.data,
+        "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
+    }
+
+    return render(request, "billing/dashboard.html", context)
+
+def customer_portal(request):
+    profile = request.user.profile
+
+    session = stripe.billing_portal.Session.create(
+        customer=profile.stripe_customer_id,
+        return_url=request.build_absolute_uri(reverse("billing_dashboard")),
+    )
+
+    return redirect(session.url)
 
 def billing_success(request):
     return render(request, "billing/success.html")
@@ -50,38 +76,3 @@ def billing_success(request):
 def billing_cancel(request):
     return render(request, "billing/cancel.html")
 
-def billing_dashboard(request):
-    profile = request.user.profile
-    stripe_customer = profile.stripe_customer_id
-
-    # Fetch invoices from Stripe
-    invoices = stripe.Invoice.list(customer=stripe_customer, limit=10)
-
-    # Fetch subscription details
-    subscription = None
-    if profile.stripe_subscription_id:
-        subscription = stripe.Subscription.retrieve(profile.stripe_subscription_id)
-
-    # Fetch usage (if using metered billing)
-    usage = None
-    if subscription:
-        items = subscription['items']['data']
-        for item in items:
-            if item['price']['recurring']['usage_type'] == 'metered':
-                usage = stripe.UsageRecordSummary.list(
-                    subscription_item=item['id']
-                )
-
-    return render(request, 'billing/dashboard.html', {
-        'profile': profile,
-        'subscription': subscription,
-        'invoices': invoices,
-        'usage': usage,
-    })
-
-def billing_portal(request):
-    session = stripe.billing_portal.Session.create(
-        customer=request.user.profile.stripe_customer_id,
-        return_url='https://yourdomain.com/billing/dashboard/',
-    )
-    return redirect(session.url)
