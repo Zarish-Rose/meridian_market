@@ -27,17 +27,19 @@ def stripe_webhook(request):
         customer_id = subscription["customer"]
         status = subscription["status"]
         price_id = subscription["items"]["data"][0]["price"]["id"]
+        tier = settings.STRIPE_PRICE_TO_TIER.get(price_id)
 
         # Find the user
         profile = Profile.objects.get(stripe_customer_id=customer_id)
 
         # Update your subscription model
-        stripe.Subscription.objects.update_or_create(
+        Subscription.objects.update_or_create(
             user=profile.user,
             defaults={
                 "stripe_subscription_id": subscription["id"],
                 "status": status,
                 "price_id": price_id,
+                "tier": tier,
                 "current_period_end": subscription["current_period_end"],
             }
         )
@@ -50,7 +52,7 @@ def stripe_webhook(request):
         profile = Profile.objects.get(stripe_customer_id=customer_id)
 
         # Mark subscription as unpaid or past_due
-        stripe.Subscription.objects.filter(user=profile.user).update(
+        Subscription.objects.filter(user=profile.user).update(
             status="past_due"
         )
     
@@ -61,7 +63,7 @@ def stripe_webhook(request):
 
         profile = Profile.objects.get(stripe_customer_id=customer_id)
 
-        stripe.Subscription.objects.filter(user=profile.user).update(
+        Subscription.objects.filter(user=profile.user).update(
             status="canceled"
         )
 

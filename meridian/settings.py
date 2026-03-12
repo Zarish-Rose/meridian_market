@@ -51,6 +51,12 @@ STRIPE_PRICE_BASIC = "price_1TA82fPCSWfgJxLvPvKbG541"
 STRIPE_PRICE_PRO = "price_1TA83jPCSWfgJxLvsFeerDkJ"
 STRIPE_PRICE_ENTERPRISE = "price_1TA84zPCSWfgJxLvyFFC3IdN"
 
+STRIPE_PRICE_TO_TIER = {
+    "price_basic_123": "basic",
+    "price_pro_456": "pro",
+    "price_enterprise_789": "enterprise",
+}
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -121,7 +127,7 @@ WSGI_APPLICATION = 'meridian.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
+        default=os.getenv('DATABASE_URL'),
         conn_max_age=600,
         ssl_require=True,
     )

@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from datetime import datetime
+from billing.utils import has_enterprise, has_pro
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -35,6 +36,13 @@ def create_checkout_session(request, tier):
     )
 
     return redirect(checkout_session.url)
+
+def send_message(request):
+    user = request.user
+
+    if not (has_pro(user) or has_enterprise(user)):
+        return redirect("upgrade_page")
+    # Feature logic here        
 
 def billing_success(request):
     return render(request, "billing/success.html")
