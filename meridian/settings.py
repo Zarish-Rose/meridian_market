@@ -14,20 +14,44 @@ from pathlib import Path
 import os
 import dj_database_url
 import stripe
+import logging
+import logging.config
+from dotenv import load_dotenv
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-# Load environment variables from env.py (sets DATABASE_URL)
-exec((BASE_DIR / "env.py").read_text(), {})
+load_dotenv(BASE_DIR / ".env")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG") == "True"
+
+STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+
+STRIPE_PRICE_BASIC = "price_1TA82fPCSWfgJxLvPvKbG541"
+STRIPE_PRICE_PRO = "price_1TA83jPCSWfgJxLvsFeerDkJ"
+STRIPE_PRICE_ENTERPRISE = "price_1TA84zPCSWfgJxLvyFFC3IdN"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com']
 
@@ -48,6 +72,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'stores.apps.StoresConfig',
     'subscribers.apps.SubscribersConfig',
+    'billing',
     'campaigns',
     'corsheaders',
 ]
@@ -109,6 +134,12 @@ CSRF_TRUSTED_ORIGINS = [
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
