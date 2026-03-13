@@ -1,11 +1,14 @@
+from ast import Store
+
 import stripe
 from datetime import datetime, time
 from django.urls import reverse
 from django.conf import settings
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from billing.utils import can_send_messages, has_enterprise, has_pro
 from accounts.models import Profile
+from stores.models import Store
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -15,7 +18,8 @@ PLAN_PRICE_MAP = {
     "enterprise": settings.STRIPE_PRICE_ENTERPRISE,
 }
 
-def create_checkout_session(request, tier):
+def create_checkout_session(request, tier, store_slug):
+    store = get_object_or_404(Store, slug=store_slug)
     profile = request.user.profile
     price_id = PLAN_PRICE_MAP.get(tier)
 
@@ -30,6 +34,10 @@ def create_checkout_session(request, tier):
             "price": price_id,
             "quantity": 1,
         }],
+        metadata={
+            "store_id": store.id,
+            "store_slug": store.slug,
+        },
         success_url=request.build_absolute_uri(
             reverse("billing_success")
         ) + "?session_id={CHECKOUT_SESSION_ID}",

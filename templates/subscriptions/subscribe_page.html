@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ store.name }} — Subscribe</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+            background: #f9f9f9;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #4f46e5;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <h2>{{ store.name }}</h2>
+        <p>Subscribe to support this store and unlock exclusive benefits.</p>
+    </div>
+
+    <div class="card">
+        <h3>Choose Your Plan</h3>
+
+        <a class="btn" href="{% url 'create_checkout_session' 'basic' store.slug %}">
+            Basic Plan
+        </a>
+
+        <a class="btn" href="{% url 'create_checkout_session' 'pro' store.slug %}">
+            Pro Plan
+        </a>
+
+        <a class="btn" href="{% url 'create_checkout_session' 'enterprise' store.slug %}">
+            Enterprise Plan
+        </a>
+    </div>
+
+</body>
+</html>

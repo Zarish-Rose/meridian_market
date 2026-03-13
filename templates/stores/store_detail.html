@@ -13,6 +13,11 @@
 <p><a href="{% url 'store_list' %}">Back to My Stores</a></p>
 <p><strong>Created:</strong> {{ store.created_at }}</p>
 
+{% if store.qr_code %}
+    <img src="{{ store.qr_code.url }}" alt="QR Code" width="200">
+    <a href="{{ store.qr_code.url }}" download>Download QR Code</a>
+{% endif %}
+
 {% if store.logo %}
     <img src="{{ store.logo.url }}" alt="{{ store.name }} Logo" style="max-height: 120px;">
 {% endif %}
