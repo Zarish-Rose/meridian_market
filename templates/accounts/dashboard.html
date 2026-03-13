@@ -10,6 +10,24 @@
 <p><strong>Company:</strong> {{ request.user.profile.company_name }}</p>
 <p><strong>Phone:</strong> {{ request.user.profile.phone }}</p>
 
+<div class="card">
+    <h3>Your Store QR Code</h3>
+
+    {% if store.qr_code %}
+        <img src="{{ store.qr_code.url }}" alt="QR Code" width="200" style="border-radius: 8px; margin-bottom: 10px;">
+
+        <a href="{% url 'download_qr' store.slug %}" class="btn btn-primary">
+            Download QR Code (PNG)
+        </a>
+    {% else %}
+        <p>No QR code generated yet.</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'download_qr' store.slug %}?size=large" class="btn btn-secondary">
+    Download High‑Resolution QR
+</a>
+
 {% if user.profile.subscription_tier == 'free' %}
     <p>Your free trial ends on {{ user.profile.trial_ends_at }}</p>
     <a href="{% url 'pricing' %}">Upgrade Now</a>

@@ -8,4 +8,5 @@ urlpatterns = [
     path('<int:store_id>/edit/', views.edit_store, name='edit_store'),
     path('<int:store_id>/delete/', views.delete_store, name='delete_store'),
     path('<int:store_id>/team/add/', views.add_store_member, name='add_store_member'),
+    path("<slug:store_slug>/download-qr/", views.download_qr_code, name="download_qr"),
 ]

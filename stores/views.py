@@ -1,9 +1,10 @@
+from .models import Store
+from .forms import StoreForm
+from django.http import FileResponse, Http404, HttpResponse
+from .decorators import store_access_required
 from django.shortcuts import render, redirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .decorators import store_access_required
-from .models import Store
-from .forms import StoreForm
 
 @login_required
 def store_list(request):
@@ -90,3 +91,13 @@ def add_store_member(request, store_id):
         'form': form,
         'store': store
     })
+
+def download_qr_code(request, store_slug):
+    store = get_object_or_404(Store, slug=store_slug)
+
+    if not store.qr_code:
+        return HttpResponse("QR code not found.", status=404)
+
+    response = HttpResponse(store.qr_code.read(), content_type="image/png")
+    response["Content-Disposition"] = f'attachment; filename="{store.slug}_qr.png"'
+    return response

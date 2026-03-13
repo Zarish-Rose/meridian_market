@@ -14,13 +14,28 @@ class Store(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     qr_code = models.ImageField(upload_to="qr_codes/", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    
     def save(self, *args, **kwargs):
+        # Detect if this is an update
+        is_new = self.pk is None
+
+        # Fetch old version if updating
+        old_slug = None
+        if not is_new:
+            old = Store.objects.get(pk=self.pk)
+            old_slug = old.slug
+
+        # Auto-generate slug if missing
         if not self.slug:
             self.slug = slugify(f"{self.owner.username}-{self.name}")
-        super().save(*args, **kwargs)
-        # Ensures QR code is generated after store creation
 
+        super().save(*args, **kwargs)
+
+        # If new store OR slug changed → regenerate QR code
+        if is_new or self.slug != old_slug:
+            self.generate_qr_code()
+
+    def generate_qr_code(self):
         subscription_url = f"{settings.SITE_URL}/subscribe/{self.slug}/"
 
         qr = qrcode.QRCode(
@@ -33,14 +48,12 @@ class Store(models.Model):
 
         img = qr.make_image(fill_color="black", back_color="white")
 
-        # Save to ImageField
         buffer = BytesIO()
         img.save(buffer, format="PNG")
         file_name = f"{self.slug}-qr.png"
 
         self.qr_code.save(file_name, File(buffer), save=False)
-
-        super().save(*args, **kwargs)
+        super().save()
     
     logo = models.ImageField(upload_to='store_logos/', blank=True, null=True)
     tagline = models.CharField(max_length=200, blank=True)
