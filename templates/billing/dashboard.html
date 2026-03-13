@@ -41,8 +41,27 @@
     <a href="{% url 'create_checkout_session' 'enterprise' %}">Upgrade to Enterprise</a>
 {% endif %}
 
+{% if subscription.tier == "basic" %}
+    <a href="{% url 'change_plan' 'pro' %}">Upgrade to Pro</a>
+{% endif %}
+
+{% if subscription.tier == "pro" %}
+    <a href="{% url 'change_plan' 'basic' %}">Downgrade to Basic</a>
+{% endif %}
+
+{% if subscription.tier != "enterprise" %}
+    <a href="{% url 'change_plan' 'enterprise' %}">Upgrade to Enterprise</a>
+{% endif %}
+
 <a href="{% url 'customer_portal' %}">Manage Payment Method</a>
-<a href="{% url 'billing_cancel' %}">Cancel Subscription</a>
+<a href="{% url 'cancel_subscription' %}">Cancel Subscription</a>
+
+<h2>Upgrade Required</h2>
+<p>Your current plan does not include this feature.</p>
+
+<a href="{% url 'billing_dashboard' %}">View Plans</a>
+
+summary = plan_summary(request.user)
 
 <hr>
 

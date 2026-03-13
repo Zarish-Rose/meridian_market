@@ -36,3 +36,4 @@ class Profile(models.Model):
     )
     trial_ends_at = models.DateTimeField(blank=True, null=True)
     is_subscribed = models.BooleanField(default=False)
+    message_credits = models.IntegerField(default=0)

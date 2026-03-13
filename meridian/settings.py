@@ -57,6 +57,9 @@ STRIPE_PRICE_TO_TIER = {
     "price_enterprise_789": "enterprise",
 }
 
+STRIPE_PRICE_MESSAGE_CREDITS = "price_1TAQKrPCSWfgJxLv5VGOnDlW"
+STRIPE_PRICE_METERED = "price_1TARQ0PCSWfgJxLvvk67oN2D"
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 

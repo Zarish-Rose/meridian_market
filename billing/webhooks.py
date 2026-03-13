@@ -67,4 +67,15 @@ def stripe_webhook(request):
             status="canceled"
         )
 
+    # Increase credits after purchase
+    if event["type"] == "checkout.session.completed":
+        session = event["data"]["object"]
+
+        if session["mode"] == "payment":
+            customer_id = session["customer"]
+            profile = Profile.objects.get(stripe_customer_id=customer_id)
+
+            profile.message_credits += 100
+            profile.save()
+
     return HttpResponse(status=200)

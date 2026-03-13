@@ -9,3 +9,7 @@
 {% if user.subscription.tier == "basic" %}
     <a href="{% url 'create_checkout_session' 'pro' %}">Upgrade to Pro</a>
 {% endif %}
+
+{% if can_access_analytics user %}
+    <a href="/analytics/">Advanced Analytics</a>
+{% endif %}

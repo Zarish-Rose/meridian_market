@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 import stripe
 from urllib3 import request
+from billing.utils import can_access_analytics, can_send_messages
 from campaigns import models
 from stores.models import Store
 
@@ -48,3 +49,9 @@ def require_tier(min_tier):
             return view_func(request, *args, **kwargs)
         return wrapper
     return decorator
+
+def billing_helpers(request):
+    return {
+        "can_access_analytics": can_access_analytics,
+        "can_send_messages": can_send_messages,
+    }
