@@ -9,15 +9,18 @@ from .models import Profile
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 @receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=Profile)
 def create_stripe_customer(sender, instance, created, **kwargs):
     if created:
         # Create Stripe customer
         customer = stripe.Customer.create(
-            email=instance.email,
-            name=instance.get_full_name() or instance.username,
+            email=instance.user.email,
+            name=instance.user.username,
         )
-
-        # Attach to profile
-        profile = Profile.objects.get(user=instance)
-        profile.stripe_customer_id = customer.id
-        profile.save()
+        instance.stripe_customer_id = customer.id
+        instance.save()        

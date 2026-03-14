@@ -16,8 +16,8 @@ class Profile(models.Model):
     
     ROLE_CHOICES = [
     ('owner', 'Business Owner'),
+    ('manager', 'Manager'),
     ('staff', 'Staff Member'),
-    ('admin', 'Administrator'),
     ]
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='owner')
