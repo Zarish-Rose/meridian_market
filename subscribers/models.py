@@ -6,27 +6,41 @@ from encryption.fields import EncryptedCharField
 from encryption.tokens import generate_token
 from stores.models import Store
 
+
 class Subscriber(models.Model):
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name='subscribers')
+    # Internal primary key (keep as integer for DB stability)
+    id = models.BigAutoField(primary_key=True)
+
+    # Public-facing UUID (safe for URLs, QR codes, external references)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+    store = models.ForeignKey(
+        Store,
+        on_delete=models.CASCADE,
+        related_name='subscribers'
+    )
+
     name = models.CharField(max_length=150)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
+
+    # Encrypted identity fields
+    encrypted_phone = EncryptedCharField(max_length=255, null=True, blank=True)
+    encrypted_birth_month = EncryptedCharField(max_length=255, null=True, blank=True)
+
+    # Token for QR onboarding or secure lookups
+    token = models.CharField(
+        max_length=64,
+        unique=True,
+        db_index=True,
+        null=True,
+        blank=True
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('store', 'email', 'phone')
-
-    def __str__(self):
-        return f"{self.name} ({self.store.name})"    
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
-    encrypted_phone = EncryptedCharField(max_length=255)
-    encrypted_birth_month = EncryptedCharField(max_length=255)
-
-    token = models.CharField(max_length=64, unique=True, db_index=True)
-
-    created_at = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
         # Generate token only once
@@ -35,8 +49,7 @@ class Subscriber(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Subscriber {self.id}"
-    
+        return f"Subscriber {self.uuid}"
 
 class Subscription(models.Model):
     """

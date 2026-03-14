@@ -63,6 +63,11 @@ STRIPE_PRICE_METERED = os.getenv("STRIPE_PRICE_METERED")
 
 SITE_URL = os.getenv("SITE_URL")
 
+DISABLE_EXTERNAL_API_SIGNALS = os.getenv(
+    "DISABLE_EXTERNAL_API_SIGNALS",
+    "True" if 'test' in sys.argv else "False",
+) == "True"
+
 ENCRYPTION_KEY = os.environ.get("ENCRYPTION_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!

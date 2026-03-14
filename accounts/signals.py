@@ -16,11 +16,25 @@ def create_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Profile)
 def create_stripe_customer(sender, instance, created, **kwargs):
-    if created:
-        # Create Stripe customer
-        customer = stripe.Customer.create(
-            email=instance.user.email,
-            name=instance.user.username,
-        )
-        instance.stripe_customer_id = customer.id
-        instance.save()        
+    if not created:
+        return
+
+    if kwargs.get("raw", False):
+        return
+
+    if getattr(settings, "DISABLE_EXTERNAL_API_SIGNALS", False):
+        return
+
+    if instance.stripe_customer_id:
+        return
+
+    if not settings.STRIPE_SECRET_KEY:
+        return
+
+    # Create Stripe customer only when external API calls are enabled.
+    customer = stripe.Customer.create(
+        email=instance.user.email,
+        name=instance.user.username,
+    )
+    instance.stripe_customer_id = customer.id
+    instance.save(update_fields=["stripe_customer_id"])
