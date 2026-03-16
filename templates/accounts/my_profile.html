@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/my_profile.css' %}">
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+
+<p><strong>Role:</strong> {{ user.profile.get_role_display }}</p>
+<p><strong>Name:</strong> {{ user.profile.full_name|default:"Not provided" }}</p>
+<p><strong>Company:</strong> {{ user.profile.company_name|default:"Not provided" }}</p>
+<p><strong>Phone:</strong> {{ user.profile.phone|default:"Not provided" }}</p>
+
+<div class="card">
+    <h3>Your Store QR Code</h3>
+
+    {% if store and store.qr_code %}
+        <img src="{{ store.qr_code.url }}" alt="QR Code" width="200" style="border-radius: 8px; margin-bottom: 10px;">
+
+        <a href="{% url 'download_qr' store.slug %}" class="btn btn-primary">
+            Download QR Code (PNG)
+        </a>
+    {% else %}
+        <p>No store or QR code available yet.</p>
+    {% endif %}
+</div>
+
+{% if store %}
+    <a href="{% url 'download_qr' store.slug %}?size=large" class="btn btn-secondary">
+        Download High-Resolution QR
+    </a>
+{% else %}
+    <p><a href="{% url 'create_store' %}">Create your first store</a></p>
+{% endif %}
+
+<hr>
+
+{% if user.profile.is_subscribed %}
+    <p>You are on the {{ user.profile.subscription_tier|title }} plan.</p>
+{% else %}
+    {% if user.profile.subscription_tier == 'free' %}
+        <p>Your free trial ends on {{ user.profile.trial_ends_at }}</p>
+        <a href="{% url 'billing_dashboard' %}" class="btn btn-primary">Upgrade Now</a>
+    {% else %}
+        <p>Your trial has ended. Please subscribe to continue.</p>
+    {% endif %}
+{% endif %}
+
+<h2>Choose Your Plan</h2>
+
+{% if store %}
+    <div class="plans">
+        <a href="{% url 'create_checkout_session' 'basic' store.slug %}" class="plan">Basic – GBP 9/mo</a>
+        <a href="{% url 'create_checkout_session' 'pro' store.slug %}" class="plan">Pro – GBP 29/mo</a>
+        <a href="{% url 'billing_dashboard' %}" class="plan">Enterprise – Contact Us</a>
+    </div>
+{% else %}
+    <p>Create a store first to pick a plan.</p>
+{% endif %}
+
+<hr>
+
+<h2>Edit Profile</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save changes</button>
+</form>
+
+<hr>
+
+{% endblock %}
