@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    padding: 24px;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #f6f8fb;
+    color: #1f2937;
+}
+
+nav {
+    margin-bottom: 12px;
+}
+
+nav a {
+    color: #1f4ed8;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
