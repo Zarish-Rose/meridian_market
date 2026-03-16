@@ -1,5 +1,10 @@
+h2 {
+    text-align: center;
+}
+
 form {
     max-width: 540px;
+    margin: 0 auto;
     padding: 20px;
     border: 1px solid #dbe2ea;
     border-radius: 10px;

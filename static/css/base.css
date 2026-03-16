@@ -6,8 +6,21 @@ body {
     color: #1f2937;
 }
 
+header a {
+    color: inherit;
+    text-decoration: none;
+}
+
 nav {
     margin-bottom: 12px;
+}
+
+.auth-page .main-nav {
+    text-align: center;
+}
+
+.auth-page header {
+    text-align: center;
 }
 
 nav a {
@@ -18,4 +31,13 @@ nav a {
 
 nav a:hover {
     text-decoration: underline;
+}
+
+.site-footer {
+    margin-top: 32px;
+    padding-top: 12px;
+    border-top: 1px solid #dbe2ea;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
 }

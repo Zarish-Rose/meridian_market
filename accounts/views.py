@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from django.http import HttpResponse
 from .forms import ProfileForm
 from accounts.decorators import role_required
 
 
 def index(request):
-    return HttpResponse("Accounts app is working.")
+    return render(request, 'home/home.html')
+
+def about(request):
+    return render(request, 'home/about.html')
 
 def register(request):
     if request.method == 'POST':
@@ -20,7 +22,7 @@ def register(request):
     else:
         form = UserCreationForm()
 
-    return render(request, 'accounts/register.html', {'form': form})
+    return render(request, 'home/register.html', {'form': form})
 
 @login_required
 def dashboard(request):
