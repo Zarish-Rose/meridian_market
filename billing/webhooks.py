@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from accounts.models import Profile
+from billing.models import StripeSubscription
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -33,7 +34,7 @@ def stripe_webhook(request):
         profile = Profile.objects.get(stripe_customer_id=customer_id)
 
         # Update your subscription model
-        Subscription.objects.update_or_create(
+        StripeSubscription.objects.update_or_create(
             user=profile.user,
             defaults={
                 "stripe_subscription_id": subscription["id"],
@@ -52,7 +53,7 @@ def stripe_webhook(request):
         profile = Profile.objects.get(stripe_customer_id=customer_id)
 
         # Mark subscription as unpaid or past_due
-        Subscription.objects.filter(user=profile.user).update(
+        StripeSubscription.objects.filter(user=profile.user).update(
             status="past_due"
         )
     
@@ -63,7 +64,7 @@ def stripe_webhook(request):
 
         profile = Profile.objects.get(stripe_customer_id=customer_id)
 
-        Subscription.objects.filter(user=profile.user).update(
+        StripeSubscription.objects.filter(user=profile.user).update(
             status="canceled"
         )
 

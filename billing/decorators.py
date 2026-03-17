@@ -1,57 +1,35 @@
-from time import time
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
-import stripe
-from urllib3 import request
-from billing.utils import can_access_analytics, can_send_messages
-from campaigns import models
-from stores.models import Store
+
+from billing.utils import can_send_messages, user_tier
+
 
 def subscription_required(view_func):
     def wrapper(request, *args, **kwargs):
-        if not request.user.profile.is_subscribed:
+        subscription = getattr(request.user, "subscription", None)
+        if not subscription or not subscription.is_active():
             raise PermissionDenied
         return view_func(request, *args, **kwargs)
+
     return wrapper
 
-# Metered monthly billing based on usage
-stripe.UsageRecord.create(
-    quantity=1,
-    timestamp=int(time.time()),
-    subscription_item=item_id,  # from Stripe
-    action='increment',
-)
-
-# Pre-paid credits when a pack is purchased
-class MessageCredit(models.Model):
-    store = models.ForeignKey(Store, on_delete=models.CASCADE)
-    balance = models.IntegerField(default=0)
-
-    if store.credits.balance <= 0:
-        raise Exception("Not enough credits")
-    store.credits.balance -= 1
-    store.credits.save()
-
-stripe.billing_portal.Session.create(
-    customer=request.user.stripecustomer.stripe_customer_id,
-    return_url='https://yourdomain.com/dashboard/',
-)
-<a href="{% url 'billing_portal' %}">Manage Billing</a>
 
 def require_tier(min_tier):
-    tier_order = ['free', 'basic', 'pro', 'enterprise']
+    tier_order = [None, "basic", "pro", "enterprise"]
 
     def decorator(view_func):
         def wrapper(request, *args, **kwargs):
-            user_tier = request.user.profile.subscription_tier
-            if tier_order.index(user_tier) < tier_order.index(min_tier):
-                return redirect('upgrade_page')
+            current_tier = user_tier(request.user)
+            if tier_order.index(current_tier) < tier_order.index(min_tier):
+                return redirect("upgrade_page")
             return view_func(request, *args, **kwargs)
+
         return wrapper
+
     return decorator
+
 
 def billing_helpers(request):
     return {
-        "can_access_analytics": can_access_analytics,
         "can_send_messages": can_send_messages,
     }

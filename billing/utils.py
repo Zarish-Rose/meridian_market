@@ -1,69 +1,90 @@
+from time import time
+
+import stripe
+
+
+def _get_subscription(user):
+    return getattr(user, "subscription", None)
+
+
 def has_basic(user):
-    return user.subscription.tier == "basic" and user.subscription.is_active()
+    subscription = _get_subscription(user)
+    return bool(
+        subscription
+        and subscription.tier == "basic"
+        and subscription.is_active()
+    )
+
 
 def has_pro(user):
-    return user.subscription.tier == "pro" and user.subscription.is_active()
+    subscription = _get_subscription(user)
+    return bool(
+        subscription
+        and subscription.tier == "pro"
+        and subscription.is_active()
+    )
+
 
 def has_enterprise(user):
-    return user.subscription.tier == "enterprise" and user.subscription.is_active()
+    subscription = _get_subscription(user)
+    return bool(
+        subscription
+        and subscription.tier == "enterprise"
+        and subscription.is_active()
+    )
+
 
 def user_tier(user):
-    if not hasattr(user, "subscription"):
+    subscription = _get_subscription(user)
+    if not subscription or not subscription.is_active():
         return None
-    if not user.subscription.is_active():
-        return None
-    return user.subscription.tier
+    return subscription.tier
+
 
 def can_send_messages(user):
     tier = user_tier(user)
 
-    # Enterprise: unlimited
-    if tier == "enterprise":
+    if tier in {"enterprise", "pro"}:
         return True
 
-    # Pro: unlimited or high limit
-    if tier == "pro":
-        return True
-
-    # Basic: limited by credits
     if tier == "basic":
         return user.profile.message_credits > 0
 
     return False
 
+
 def can_access_analytics(user):
     return user_tier(user) in ["pro", "enterprise"]
 
-def get_stripe_subscription(profile):
-    return profile.stripe_subscription
+
+def get_stripe_subscription(user):
+    return _get_subscription(user)
+
 
 def can_add_multiple_stores(user):
     return user_tier(user) == "enterprise"
-    
+
 
 def record_message_usage(user):
     profile = user.profile
+    subscription = _get_subscription(user)
 
-    # Basic plan uses credits
     if user_tier(user) == "basic":
         profile.message_credits -= 1
-        profile.save()
+        profile.save(update_fields=["message_credits"])
 
-    # Metered billing (optional)
-    if hasattr(user.subscription, "metered_item_id"):
+    if subscription and hasattr(subscription, "metered_item_id"):
         stripe.UsageRecord.create(
             quantity=1,
-            timestamp=int(time.time()),
+            timestamp=int(time()),
             action="increment",
-            subscription_item=user.subscription.metered_item_id,
+            subscription_item=subscription.metered_item_id,
         )
 
-    if not can_access_analytics(request.user):
-        return redirect("upgrade_required")
-    
+
 def plan_summary(user):
-    sub = getattr(user, "subscription", None)
-    if not sub or not sub.is_active():
+    subscription = _get_subscription(user)
+    if not subscription or not subscription.is_active():
         return {
             "tier": None,
             "active": False,
@@ -71,9 +92,9 @@ def plan_summary(user):
         }
 
     return {
-        "tier": sub.tier,
+        "tier": subscription.tier,
         "active": True,
         "credits": user.profile.message_credits,
-        "next_payment": sub.current_period_end,
-        "status": sub.status,
+        "next_payment": subscription.current_period_end,
+        "status": subscription.status,
     }

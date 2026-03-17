@@ -32,6 +32,7 @@ def register(request):
 def my_profile(request):
     user = request.user
     profile, _ = Profile.objects.get_or_create(user=user)
+    subscription = getattr(user, 'subscription', None)
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=profile)
@@ -50,5 +51,5 @@ def my_profile(request):
     else:
         store = None
 
-    context = {'store': store, 'form': form}
+    context = {'store': store, 'form': form, 'subscription': subscription}
     return render(request, 'accounts/my_profile.html', context)

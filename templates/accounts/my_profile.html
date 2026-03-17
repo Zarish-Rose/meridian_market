@@ -40,15 +40,11 @@
 
 <hr>
 
-{% if user.profile.is_subscribed %}
-    <p>You are on the {{ user.profile.subscription_tier|title }} plan.</p>
+{% if subscription and subscription.is_active %}
+    <p>You are on the {{ subscription.tier|title }} plan.</p>
 {% else %}
-    {% if user.profile.subscription_tier == 'free' %}
-        <p>Your free trial ends on {{ user.profile.trial_ends_at }}</p>
-        <a href="{% url 'billing_dashboard' %}" class="btn btn-primary">Upgrade Now</a>
-    {% else %}
-        <p>Your trial has ended. Please subscribe to continue.</p>
-    {% endif %}
+    <p>You do not have an active subscription.</p>
+    <a href="{% url 'billing_dashboard' %}" class="btn btn-primary">Upgrade Now</a>
 {% endif %}
 
 <h2>Choose Your Plan</h2>
