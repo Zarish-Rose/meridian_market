@@ -1,0 +1,46 @@
+.home-shell {
+    display: grid;
+    place-items: center;
+    padding: 18px 0;
+}
+
+.home-card {
+    width: 100%;
+    max-width: 720px;
+    padding: 28px;
+    text-align: center;
+    border: 1px solid #dbe2ea;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.home-card h2 {
+    margin: 0 0 10px;
+    font-size: 2rem;
+}
+
+.home-card p {
+    margin: 0 auto;
+    max-width: 600px;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.home-actions {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+@media (max-width: 640px) {
+    .home-card {
+        padding: 20px;
+    }
+
+    .home-card h2 {
+        font-size: 1.5rem;
+    }
+}

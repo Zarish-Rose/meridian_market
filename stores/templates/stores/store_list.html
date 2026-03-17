@@ -2,20 +2,32 @@
 
 {% block title %}My Stores{% endblock %}
 
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/stores.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>My Stores</h2>
+<section class="stores-page">
+    <header class="page-header card">
+        <h2>My Stores</h2>
+        <a href="{% url 'create_store' %}" class="btn btn-primary">+ Create New Store</a>
+    </header>
 
-<p><a href="{% url 'create_store' %}">+ Create New Store</a></p>
-
-{% if stores %}
-    <ul>
-        {% for store in stores %}
-            <li>
-                <a href="{% url 'store_detail' store.id %}">{{ store.name }}</a>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>You have no stores yet.</p>
-{% endif %}
+    {% if stores %}
+        <ul class="store-list card">
+            {% for store in stores %}
+                <li>
+                    <span class="store-name">{{ store.name }}</span>
+                    <a href="{% url 'store_detail' store.id %}" class="btn btn-ghost">Open</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <article class="card empty-state">
+            <p>You have no stores yet.</p>
+            <a href="{% url 'create_store' %}" class="btn btn-primary">Create your first store</a>
+        </article>
+    {% endif %}
+</section>
 {% endblock %}

@@ -1,5 +1,7 @@
 from django import forms
+
 from .models import Store, StoreMember
+
 
 class StoreForm(forms.ModelForm):
     class Meta:
@@ -8,14 +10,11 @@ class StoreForm(forms.ModelForm):
             'name',
             'description',
             'website',
-            'logo',
-            'tagline',
-            'primary_color',
-            'accent_color',
         ]
-        
+
+
 class StoreMemberForm(forms.ModelForm):
     class Meta:
         model = StoreMember
         fields = ['user', 'role']
-        
+

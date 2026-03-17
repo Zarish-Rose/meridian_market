@@ -1,0 +1,44 @@
+.auth-shell {
+    display: grid;
+    place-items: center;
+    padding: 10px 0;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 500px;
+    padding: 24px;
+}
+
+.auth-title {
+    margin: 0;
+    text-align: center;
+}
+
+.auth-subtitle {
+    margin: 8px 0 18px;
+    text-align: center;
+    color: #64748b;
+}
+
+.auth-alt-link {
+    margin: 14px 0 0;
+    text-align: center;
+    color: #64748b;
+}
+
+.auth-alt-link a {
+    color: #1d4ed8;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-alt-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .auth-card {
+        padding: 18px;
+    }
+}

@@ -2,59 +2,72 @@
 
 {% block title %}{{ store.name }}{% endblock %}
 
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/stores.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>{{ store.name }}</h2>
+<section class="store-detail-page">
+    <header class="store-header card">
+        <div>
+            <h2>{{ store.name }}</h2>
+            <p class="meta-line"><strong>Created:</strong> {{ store.created_at|date:"M d, Y" }}</p>
+        </div>
 
-<p><a href="{% url 'edit_store' store.id %}">Edit Store</a></p>
-<p><a href="{% url 'delete_store' store.id %}">Delete Store</a></p>
-<p><a href="{% url 'add_store_member' store.id %}">+ Add Team Member</a></p>
-<p><a href="{% url 'subscriber_list' store.id %}">View Subscribers</a></p>
-<p><a href="{% url 'campaign_list' store.id %}">View Campaigns</a></p>
-<p><a href="{% url 'store_list' %}">Back to My Stores</a></p>
-<p><strong>Created:</strong> {{ store.created_at }}</p>
+        <div class="actions">
+            <a href="{% url 'edit_store' store.id %}" class="btn btn-primary">Edit Store</a>
+            <a href="{% url 'delete_store' store.id %}" class="btn btn-danger">Delete Store</a>
+            <a href="{% url 'add_store_member' store.id %}" class="btn btn-secondary">+ Add Team Member</a>
+            <a href="{% url 'subscriber_list' store.id %}" class="btn btn-secondary">View Subscribers</a>
+            <a href="{% url 'campaign_list' store.id %}" class="btn btn-secondary">View Campaigns</a>
+            <a href="{% url 'store_list' %}" class="btn btn-ghost">Back to My Stores</a>
+        </div>
+    </header>
 
-{% if store.qr_code %}
-    <img src="{{ store.qr_code.url }}" alt="QR Code" width="200">
-    <a href="{{ store.qr_code.url }}" download>Download QR Code</a>
-{% endif %}
+    <div class="detail-grid">
+        <article class="card">
+            <h3>Store Details</h3>
 
-{% if store.logo %}
-    <img src="{{ store.logo.url }}" alt="{{ store.name }} Logo" style="max-height: 120px;">
-{% endif %}
+            <p><strong>Description:</strong></p>
+            <p>{{ store.description|default:"No description provided." }}</p>
 
-{% if store.tagline %}
-    <p><em>{{ store.tagline }}</em></p>
-{% endif %}
+            <p><strong>Website:</strong>
+                {% if store.website %}
+                    <a href="{{ store.website }}" target="_blank" rel="noopener noreferrer">
+                        {{ store.website }}
+                    </a>
+                {% else %}
+                    No website provided
+                {% endif %}
+            </p>
+        </article>
 
-{% if store.primary_color %}
-    <p>Primary Color: <span style="background: {{ store.primary_color }}; padding: 4px 12px; border-radius: 4px; color: white;">{{ store.primary_color }}</span></p>
-{% endif %}
+        <article class="card">
+            <h3>Team Members</h3>
 
-{% if store.accent_color %}
-    <p>Accent Color: <span style="background: {{ store.accent_color }}; padding: 4px 12px; border-radius: 4px; color: white;">{{ store.accent_color }}</span></p>
-{% endif %}
+            {% if store.members.exists %}
+                <ul class="member-list">
+                    {% for member in store.members.all %}
+                        <li>
+                            <strong>{{ member.user.username }}</strong>
+                            <span class="role-badge">{{ member.get_role_display }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="muted">No team members yet.</p>
+            {% endif %}
+        </article>
+    </div>
 
-<p><strong>Description:</strong> {{ store.description }}</p>
-<p><strong>Website:</strong> 
-    {% if store.website %}
-        <a href="{{ store.website }}" target="_blank">{{ store.website }}</a>
-    {% else %}
-        No website provided
+    {% if store.qr_code %}
+    <article class="card qr-section">
+        <h3>Store QR Code</h3>
+        <img src="{{ store.qr_code.url }}" alt="QR Code for {{ store.name }}" width="220">
+        <p><a href="{{ store.qr_code.url }}" download class="btn btn-primary">Download QR Code</a></p>
+    </article>
     {% endif %}
-</p>
-
-<h3>Team Members</h3>
-
-{% if store.members.all %}
-    <ul>
-        {% for member in store.members.all %}
-            <li>{{ member.user.username }} — {{ member.get_role_display }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No team members yet.</p>
-{% endif %}
-
-<hr>
+</section>
 
 {% endblock %}

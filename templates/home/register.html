@@ -6,14 +6,22 @@
 
 {% block extra_css %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2>Create an account</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Register</button>
-</form>
+<section class="auth-shell">
+    <article class="card auth-card">
+        <h2 class="auth-title">Create an account</h2>
+        <p class="auth-subtitle">Set up your Meridian workspace in a minute.</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+
+        <p class="auth-alt-link">Already registered? <a href="{% url 'login' %}">Log in</a></p>
+    </article>
+</section>
 {% endblock %}

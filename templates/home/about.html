@@ -4,9 +4,20 @@
 
 {% block body_class %}auth-page{% endblock %}
 
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="about-form">
-	<h2 style="text-align:center;">Welcome to Meridian</h2>
-	<p style="text-align:center; max-width: 540px; margin: 0 auto;">Manage your stores, subscribers, campaigns, and billing in one place.</p>
-</div>
+<section class="home-shell">
+	<article class="home-card">
+		<h2>About Meridian</h2>
+		<p>Meridian helps local businesses run smarter customer engagement with stores, subscribers, campaigns, and billing tools in one place.</p>
+		<div class="home-actions">
+			<a href="{% url 'store_list' %}" class="btn btn-primary">View My Stores</a>
+			<a href="{% url 'accounts_index' %}" class="btn btn-ghost">Back Home</a>
+		</div>
+	</article>
+</section>
 {% endblock %}

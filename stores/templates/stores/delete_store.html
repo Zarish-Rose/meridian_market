@@ -2,16 +2,24 @@
 
 {% block title %}Delete {{ store.name }}{% endblock %}
 
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/stores.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Delete Store</h2>
+<section class="stores-page">
+    <article class="card warning-card">
+        <h2>Delete Store</h2>
 
-<p>Are you sure you want to delete <strong>{{ store.name }}</strong>?</p>
-<p>This action cannot be undone.</p>
+        <p>Are you sure you want to delete <strong>{{ store.name }}</strong>?</p>
+        <p>This action cannot be undone.</p>
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Yes, delete this store</button>
-</form>
-
-<p><a href="{% url 'store_detail' store.id %}">Cancel</a></p>
+        <form method="post" class="store-form inline-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, delete this store</button>
+            <a href="{% url 'store_detail' store.id %}" class="btn btn-ghost">Cancel</a>
+        </form>
+    </article>
+</section>
 {% endblock %}

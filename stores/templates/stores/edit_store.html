@@ -2,21 +2,23 @@
 
 {% block title %}Edit {{ store.name }}{% endblock %}
 
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/stores.css' %}">
+{% endblock %}
+
 {% block content %}
-<h2>Edit Store</h2>
+<section class="stores-page">
+    <article class="card form-card">
+        <h2>Edit Store</h2>
 
-<form method="post" enctype="multipart/form-data">
-{% if store.logo %}
-    <p>Current Logo:</p>
-    <img src="{{ store.logo.url }}" alt="Store Logo" style="max-height: 120px;">
-{% endif %}
-</form>
+        <form method="post" class="store-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Save Changes</button>
-</form>
-
-<p><a href="{% url 'store_detail' store.id %}">Back to Store</a></p>
+        <p class="page-link-row"><a href="{% url 'store_detail' store.id %}" class="btn btn-ghost">Back to Store</a></p>
+    </article>
+</section>
 {% endblock %}

@@ -6,14 +6,22 @@
 
 {% block extra_css %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
 {% endblock %}
 
 {% block content %}
-<h2 class="login-title">Login</h2>
-<form method="post" class="login-form">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="login-submit">Log in</button>
-</form>
+<section class="auth-shell">
+    <article class="card auth-card">
+        <h2 class="auth-title">Login</h2>
+        <p class="auth-subtitle">Sign in to manage your stores and campaigns.</p>
+
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Log in</button>
+        </form>
+
+        <p class="auth-alt-link">Need an account? <a href="{% url 'register' %}">Register</a></p>
+    </article>
+</section>
 {% endblock %}

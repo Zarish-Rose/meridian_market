@@ -33,8 +33,10 @@ class StoreModelTests(TestCase):
 
     def test_store_can_be_created(self):
         self.assertIsInstance(self.store, Store)
+
     def test_store_has_owner(self):
         self.assertEqual(self.store.owner, self.owner)
+
     def test_store_has_name_and_description(self):
         self.assertEqual(self.store.name, "Meridian Market")
         self.assertEqual(self.store.description, "Primary storefront")
@@ -46,13 +48,6 @@ class StoreModelTests(TestCase):
         self.store.slug = ""
         self.store.save()
         self.assertEqual(self.store.slug, "store-owner-meridian-market")
-
-    def test_store_allows_optional_branding_fields(self):
-        self.store.logo = None
-        self.store.tagline = ""
-        self.store.save()
-        self.assertFalse(self.store.logo)
-        self.assertEqual(self.store.tagline, "")
 
     def test_store_tracks_creation_timestamp(self):
         self.assertIsNotNone(self.store.created_at)

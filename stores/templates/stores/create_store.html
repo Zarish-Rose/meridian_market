@@ -2,12 +2,21 @@
 
 {% block title %}Create Store{% endblock %}
 
-{% block content %}
-<h2>Create a New Store</h2>
+{% block extra_css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/stores.css' %}">
+{% endblock %}
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Store</button>
-</form>
+{% block content %}
+<section class="stores-page">
+    <article class="card form-card">
+        <h2>Create a New Store</h2>
+
+        <form method="post" class="store-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Create Store</button>
+        </form>
+    </article>
+</section>
 {% endblock %}
