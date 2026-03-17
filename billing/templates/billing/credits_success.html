@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Credits Purchased{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Credits Purchased</h2>
+    <p>Your message credit purchase completed successfully.</p>
+    <p><a href="{% url 'billing_dashboard' %}">View Billing Dashboard</a></p>
+    <p><a href="{% url 'my_profile' %}">Back to My Profile</a></p>
+</section>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Billing Dashboard{% endblock %}
+
+{% block content %}
+<h2>Billing Dashboard</h2>
+
+{% if summary.active %}
+    <p><strong>Current Plan:</strong> {{ summary.tier|title }}</p>
+    <p><strong>Status:</strong> {{ summary.status|title }}</p>
+    {% if summary.next_payment %}
+        {% if summary.status == "trialing" %}
+            <p><strong>Trial ends:</strong> {{ summary.next_payment|date:"d M Y" }}</p>
+        {% else %}
+            <p><strong>Next payment:</strong> {{ summary.next_payment|date:"d M Y" }}</p>
+        {% endif %}
+    {% endif %}
+{% else %}
+    <p><strong>Current Plan:</strong> No active subscription</p>
+{% endif %}
+
+<p><strong>Message Credits:</strong> {{ summary.credits }}</p>
+
+<hr>
+
+<h3>Plan Actions</h3>
+
+{% if store %}
+    {% if not summary.active %}
+        <p>Choose a plan to start billing for {{ store.name }}.</p>
+        <p><a href="{% url 'create_checkout_session' 'basic' store.slug %}">Start Basic</a></p>
+        <p><a href="{% url 'create_checkout_session' 'pro' store.slug %}">Start Pro</a></p>
+        <p><a href="{% url 'create_checkout_session' 'enterprise' store.slug %}">Start Enterprise</a></p>
+    {% elif summary.tier == "basic" %}
+        <p><a href="{% url 'change_plan' 'pro' %}">Upgrade to Pro</a></p>
+        <p><a href="{% url 'change_plan' 'enterprise' %}">Upgrade to Enterprise</a></p>
+    {% elif summary.tier == "pro" %}
+        <p><a href="{% url 'change_plan' 'basic' %}">Downgrade to Basic</a></p>
+        <p><a href="{% url 'change_plan' 'enterprise' %}">Upgrade to Enterprise</a></p>
+    {% else %}
+        <p>You are already on the highest available plan.</p>
+    {% endif %}
+{% else %}
+    <p>Create a store before starting or changing a subscription.</p>
+    <p><a href="{% url 'create_store' %}">Create Store</a></p>
+{% endif %}
+
+{% if summary.active %}
+    <p><a href="{% url 'customer_portal' %}">Manage Payment Method</a></p>
+    <p><a href="{% url 'cancel_subscription' %}">Cancel Subscription</a></p>
+{% endif %}
+
+<hr>
+
+<h3>Invoices</h3>
+<ul>
+    {% for invoice in invoices %}
+        <li>
+            {{ invoice.created_at|date:"d M Y" }} -
+            {{ invoice.total|floatformat:2 }} {{ invoice.currency }} -
+            {{ invoice.status|title }}
+            {% if invoice.hosted_invoice_url %}
+                (<a href="{{ invoice.hosted_invoice_url }}" target="_blank" rel="noopener noreferrer">View invoice</a>)
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No invoices yet.</li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<p><a href="{% url 'my_profile' %}">Back to My Profile</a></p>
+
+{% endblock %}

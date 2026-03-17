@@ -1,0 +1,11 @@
+{% if store %}
+    <p><a href="{% url 'create_checkout_session' 'basic' store.slug %}">Choose Basic</a></p>
+    <p><a href="{% url 'create_checkout_session' 'pro' store.slug %}">Choose Pro</a></p>
+    <p><a href="{% url 'create_checkout_session' 'enterprise' store.slug %}">Choose Enterprise</a></p>
+{% else %}
+    <p>Create a store before choosing a subscription plan.</p>
+{% endif %}
+
+{% if user.subscription and user.subscription.tier == "basic" %}
+    <p><a href="{% url 'change_plan' 'pro' %}">Upgrade to Pro</a></p>
+{% endif %}

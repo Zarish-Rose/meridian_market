@@ -1,13 +1,10 @@
-from ast import Store
-
 import stripe
-from datetime import datetime, time
+from datetime import datetime
 from django.urls import reverse
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from billing.utils import can_send_messages, has_enterprise, has_pro
-from accounts.models import Profile
+from billing.utils import can_send_messages, plan_summary
 from stores.models import Store
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -17,6 +14,41 @@ PLAN_PRICE_MAP = {
     "pro": settings.STRIPE_PRICE_PRO,
     "enterprise": settings.STRIPE_PRICE_ENTERPRISE,
 }
+
+
+def _get_primary_store(user):
+    profile = user.profile
+
+    if profile.role == "owner":
+        return Store.objects.filter(owner=user).first()
+    if profile.role in ["staff", "manager"]:
+        return Store.objects.filter(members__user=user).distinct().first()
+    if profile.role == "admin":
+        return Store.objects.first()
+
+    return None
+
+
+def _get_recent_invoices(customer_id):
+    if not customer_id:
+        return []
+
+    try:
+        invoices = stripe.Invoice.list(customer=customer_id, limit=10)
+    except stripe.error.StripeError:
+        return []
+
+    return [
+        {
+            "created_at": datetime.fromtimestamp(invoice.created),
+            "total": (invoice.total or 0) / 100,
+            "currency": (invoice.currency or "").upper(),
+            "status": invoice.status,
+            "hosted_invoice_url": getattr(invoice, "hosted_invoice_url", None),
+        }
+        for invoice in invoices.data
+    ]
+
 
 def create_checkout_session(request, tier, store_slug):
     store = get_object_or_404(Store, slug=store_slug)
@@ -46,27 +78,24 @@ def create_checkout_session(request, tier, store_slug):
 
     return redirect(checkout_session.url)
 
-def send_message(request):
-    user = request.user
-
-    if not (has_pro(user) or has_enterprise(user)):
-        return redirect("upgrade_page")
-    # Feature logic here
 
 def billing_dashboard(request):
     profile = request.user.profile
     subscription = getattr(request.user, "subscription", None)
-
-    # Fetch invoices from Stripe
-    invoices = stripe.Invoice.list(customer=profile.stripe_customer_id, limit=10)
+    store = _get_primary_store(request.user)
+    summary = plan_summary(request.user)
+    invoices = _get_recent_invoices(profile.stripe_customer_id)
 
     context = {
         "subscription": subscription,
-        "invoices": invoices.data,
+        "summary": summary,
+        "store": store,
+        "invoices": invoices,
         "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
     }
 
     return render(request, "billing/dashboard.html", context)
+
 
 def customer_portal(request):
     profile = request.user.profile
@@ -78,6 +107,7 @@ def customer_portal(request):
 
     return redirect(session.url)
 
+
 def get_stripe_subscription(profile):
     sub = stripe.Subscription.list(
         customer=profile.stripe_customer_id,
@@ -88,6 +118,7 @@ def get_stripe_subscription(profile):
         return sub.data[0]
     return None
     # Retrieves the user's current subscription
+
 
 def change_plan(request, new_tier):
     profile = request.user.profile
@@ -111,6 +142,7 @@ def change_plan(request, new_tier):
     return redirect("billing_dashboard")
     # Subscription update
 
+
 def cancel_subscription(request):
     profile = request.user.profile
     subscription = get_stripe_subscription(profile)
@@ -122,6 +154,7 @@ def cancel_subscription(request):
 
     return redirect("billing_dashboard")
     # Cancel subscription
+
 
 def buy_credits(request):
     profile = request.user.profile
@@ -140,28 +173,28 @@ def buy_credits(request):
 
     return redirect(checkout_session.url)
 
-def send_message(request):
-    profile = request.user.profile
 
-    if profile.message_credits <= 0:
-        return redirect("buy_credits")
+def billing_success(request):
+    return render(request, "billing/billing_success.html")
 
-    profile.message_credits -= 1
-    profile.save()
-    # Deduct credit when user sends a message
 
-    stripe.UsageRecord.create(
-    quantity=1,
-    timestamp=int(time.time()),
-    action="increment",
-    subscription_item=subscription_item_id,
-    )
-    # Metered monthly billing based on usage
+def billing_cancel(request):
+    return render(request, "billing/billing_cancel.html")
+
+
+def credits_success(request):
+    return render(request, "billing/credits_success.html")
+
+
+def credits_cancel(request):
+    return render(request, "billing/credits_cancel.html")
+
 
 def send_message(request):
     if not can_send_messages(request.user):
         return redirect("upgrade_page")
     # Message logic
+
 
 def upgrade_required(request):
     return render(request, "billing/upgrade_required.html")

@@ -1,5 +1,6 @@
+from datetime import datetime, timezone
+
 import stripe
-from datetime import datetime
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -8,6 +9,14 @@ from accounts.models import Profile
 from billing.models import StripeSubscription
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+def _stripe_timestamp_to_datetime(timestamp):
+    if timestamp is None:
+        return None
+
+    return datetime.fromtimestamp(timestamp, tz=timezone.utc)
+
 
 @csrf_exempt
 def stripe_webhook(request):
@@ -21,9 +30,11 @@ def stripe_webhook(request):
     except Exception:
         return HttpResponse(status=400)
 
-
     # Subscription created or updated
-    if event["type"] in ["customer.subscription.created", "customer.subscription.updated"]:
+    if event["type"] in [
+        "customer.subscription.created",
+        "customer.subscription.updated",
+    ]:
         subscription = event["data"]["object"]
         customer_id = subscription["customer"]
         status = subscription["status"]
@@ -41,7 +52,9 @@ def stripe_webhook(request):
                 "status": status,
                 "price_id": price_id,
                 "tier": tier,
-                "current_period_end": subscription["current_period_end"],
+                "current_period_end": _stripe_timestamp_to_datetime(
+                    subscription.get("current_period_end")
+                ),
             }
         )
 
@@ -56,7 +69,7 @@ def stripe_webhook(request):
         StripeSubscription.objects.filter(user=profile.user).update(
             status="past_due"
         )
-    
+
     # Subscription cancellations
     if event["type"] == "customer.subscription.deleted":
         subscription = event["data"]["object"]

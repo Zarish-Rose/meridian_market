@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Upgrade Required{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Upgrade Required</h2>
+    <p>Your current plan does not include this feature.</p>
+    <p>Open your billing dashboard to review your subscription and change plans.</p>
+
+    <p><a href="{% url 'billing_dashboard' %}">Go to Billing Dashboard</a></p>
+    <p><a href="{% url 'my_profile' %}">Back to My Profile</a></p>
+</section>
+{% endblock %}

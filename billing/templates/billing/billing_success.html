@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscription Updated{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Subscription Updated</h2>
+    <p>Your checkout completed successfully. Stripe may take a moment to sync the latest subscription status.</p>
+    <p><a href="{% url 'billing_dashboard' %}">Return to Billing Dashboard</a></p>
+    <p><a href="{% url 'my_profile' %}">Back to My Profile</a></p>
+</section>
+{% endblock %}
