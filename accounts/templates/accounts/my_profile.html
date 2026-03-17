@@ -49,9 +49,9 @@
 
 {% if store %}
     <div class="plans">
-        <a href="{% url 'create_checkout_session' 'basic' store.slug %}" class="plan">Basic – GBP 9/mo</a>
-        <a href="{% url 'create_checkout_session' 'pro' store.slug %}" class="plan">Pro – GBP 29/mo</a>
-        <a href="{% url 'billing_dashboard' %}" class="plan">Enterprise – Contact Us</a>
+        <a href="{% url 'create_checkout_session' 'basic' store.slug %}" class="plan">Basic – GBP 19/mo</a>
+        <a href="{% url 'create_checkout_session' 'pro' store.slug %}" class="plan">Pro – GBP 39/mo</a>
+        <a href="{% url 'billing_dashboard' %}" class="plan">Enterprise – GBP 59/mo Contact Us</a>
     </div>
 {% else %}
     <p>Create a store first to pick a plan.</p>

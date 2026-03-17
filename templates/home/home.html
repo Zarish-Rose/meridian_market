@@ -12,11 +12,46 @@
 {% block content %}
 <section class="home-shell">
 	<article class="home-card">
+		<p class="home-kicker">Commerce Ops, Reimagined</p>
 		<h2>Welcome to Meridian</h2>
-		<p>Manage your stores, subscribers, campaigns, and billing in one place.</p>
+		<p class="home-lead">Manage your stores, subscribers, campaigns, and billing in one calm, connected workspace built for modern teams.</p>
 		<div class="home-actions">
 			<a href="{% url 'register' %}" class="btn btn-primary">Create Account</a>
 			<a href="{% url 'login' %}" class="btn btn-ghost">Log In</a>
+		</div>
+		<ul class="home-pillars" aria-label="Platform highlights">
+			<li>Store Management</li>
+			<li>Subscriber Growth</li>
+			<li>Campaign Delivery</li>
+			<li>Simple Billing</li>
+		</ul>
+
+		<div class="home-grid" aria-label="Meridian capabilities">
+			<section class="home-panel">
+				<h3>Run Your Store From One Dashboard</h3>
+				<p>Create and manage multiple storefronts, monitor activity, and keep operations consistent as you grow.</p>
+			</section>
+			<section class="home-panel">
+				<h3>Launch Campaigns Without Friction</h3>
+				<p>Reach your subscribers with targeted messaging and keep performance visible from draft to delivery.</p>
+			</section>
+			<section class="home-panel home-panel-stats">
+				<h3>Built For Momentum</h3>
+				<div class="home-stats" role="list" aria-label="Platform metrics">
+					<div class="home-stat" role="listitem">
+						<strong>24/7</strong>
+						<span>Access</span>
+					</div>
+					<div class="home-stat" role="listitem">
+						<strong>1 Hub</strong>
+						<span>For Your Ops</span>
+					</div>
+					<div class="home-stat" role="listitem">
+						<strong>Fast</strong>
+						<span>Team Onboarding</span>
+					</div>
+				</div>
+			</section>
 		</div>
 	</article>
 </section>
