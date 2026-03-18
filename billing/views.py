@@ -79,7 +79,7 @@ def create_checkout_session(request, tier, store_slug):
     return redirect(checkout_session.url)
 
 
-def billing_dashboard(request):
+def billing(request):
     profile = request.user.profile
     subscription = getattr(request.user, "subscription", None)
     store = _get_primary_store(request.user)
@@ -94,7 +94,7 @@ def billing_dashboard(request):
         "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
     }
 
-    return render(request, "billing/dashboard.html", context)
+    return render(request, "billing/billing_portal.html", context)
 
 
 def customer_portal(request):
@@ -102,7 +102,7 @@ def customer_portal(request):
 
     session = stripe.billing_portal.Session.create(
         customer=profile.stripe_customer_id,
-        return_url=request.build_absolute_uri(reverse("billing_dashboard")),
+        return_url=request.build_absolute_uri(reverse("billing")),
     )
 
     return redirect(session.url)
@@ -125,7 +125,7 @@ def change_plan(request, new_tier):
     subscription = get_stripe_subscription(profile)
 
     if not subscription:
-        return redirect("billing_dashboard")
+        return redirect("billing")
 
     new_price_id = PLAN_PRICE_MAP.get(new_tier)
 
@@ -139,7 +139,7 @@ def change_plan(request, new_tier):
         }],
     )
 
-    return redirect("billing_dashboard")
+    return redirect("billing")
     # Subscription update
 
 
@@ -152,7 +152,7 @@ def cancel_subscription(request):
         cancel_at_period_end=True
     )
 
-    return redirect("billing_dashboard")
+    return redirect("billing")
     # Cancel subscription
 
 

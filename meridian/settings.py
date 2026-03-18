@@ -27,6 +27,13 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
     },
+    'loggers': {
+        'stripe': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+    },
     'root': {
         'handlers': ['console'],
         'level': 'INFO',

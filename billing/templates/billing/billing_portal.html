@@ -3,7 +3,7 @@
 {% block title %}Billing Dashboard{% endblock %}
 
 {% block content %}
-<h2>Billing Dashboard</h2>
+<h2>Billing</h2>
 
 {% if summary.active %}
     <p><strong>Current Plan:</strong> {{ summary.tier|title }}</p>
@@ -47,6 +47,7 @@
 
 {% if summary.active %}
     <p><a href="{% url 'customer_portal' %}">Manage Payment Method</a></p>
+    <p><a href="{% url 'buy_credits' %}">Buy Message Credits</a></p>
     <p><a href="{% url 'cancel_subscription' %}">Cancel Subscription</a></p>
 {% endif %}
 

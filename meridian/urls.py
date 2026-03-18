@@ -18,12 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import TemplateView
 
 urlpatterns = [
+    path(
+        '',
+        TemplateView.as_view(template_name='home/home.html'),
+        name='home',
+    ),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('stores/', include('stores.urls')),
     path('subscribers/', include('subscribers.urls')),
     path('campaigns/', include('campaigns.urls')),
     path('billing/', include('billing.urls')),
+    path('', include('subscriptions.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

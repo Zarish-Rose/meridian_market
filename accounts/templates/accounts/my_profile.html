@@ -42,7 +42,7 @@
     <p>You are on the {{ subscription.tier|title }} plan.</p>
 {% else %}
     <p>You do not have an active subscription.</p>
-    <a href="{% url 'billing_dashboard' %}" class="btn btn-primary">Upgrade Now</a>
+    <a href="{% url 'billing' %}" class="btn btn-primary">Upgrade Now</a>
 {% endif %}
 
 <h2>Choose Your Plan</h2>
@@ -51,7 +51,7 @@
     <div class="plans">
         <a href="{% url 'create_checkout_session' 'basic' store.slug %}" class="plan">Basic – GBP 19/mo</a>
         <a href="{% url 'create_checkout_session' 'pro' store.slug %}" class="plan">Pro – GBP 39/mo</a>
-        <a href="{% url 'billing_dashboard' %}" class="plan">Enterprise – GBP 59/mo Contact Us</a>
+        <a href="{% url 'billing' %}" class="plan">Enterprise – GBP 59/mo Contact Us</a>
     </div>
 {% else %}
     <p>Create a store first to pick a plan.</p>
