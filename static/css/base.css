@@ -54,6 +54,18 @@ body {
     border-color: #93c5fd;
 }
 
+.nav-inline-form {
+    margin: 0;
+}
+
+.nav-link-button {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    appearance: none;
+    cursor: pointer;
+}
+
 .nav-link-admin {
     color: #92400e;
     border-color: #fcd34d;

@@ -10,7 +10,7 @@
 <body class="{% block body_class %}{% endblock %}">
 
 <header class="site-header">
-    <h1><a href="{% url 'accounts_index' %}">MERIDIAN</a></h1>
+    <h1><a href="{% url 'home' %}">MERIDIAN</a></h1>
 </header>
 
 <nav class="main-nav" aria-label="Primary">
@@ -19,7 +19,10 @@
         <a href="{% url 'my_profile' %}" class="nav-link">Profile</a>
         <a href="{% url 'billing' %}" class="nav-link">Billing</a>
         <a href="{% url 'store_list' %}" class="nav-link">Store</a>
-        <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+        <form method="post" action="{% url 'logout' %}" class="nav-inline-form">
+            {% csrf_token %}
+            <button type="submit" class="nav-link nav-link-button">Logout</button>
+        </form>
     {% else %}
         <a href="{% url 'register' %}" class="nav-link">Register</a>
         <a href="{% url 'login' %}" class="nav-link">Login</a>

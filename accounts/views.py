@@ -7,21 +7,13 @@ from .models import Profile
 from stores.models import Store
 
 
-def index(request):
-    return render(request, 'home/home.html')
-
-
-def about(request):
-    return render(request, 'home/about.html')
-
-
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('accounts_index')
+            return redirect('home')
     else:
         form = UserCreationForm()
 
