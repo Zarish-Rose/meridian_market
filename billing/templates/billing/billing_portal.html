@@ -28,9 +28,9 @@
 {% if store %}
     {% if not summary.active %}
         <p>Choose a plan to start billing for {{ store.name }}.</p>
-        <p><a href="{% url 'create_checkout_session' 'basic' store.slug %}">Start Basic</a></p>
-        <p><a href="{% url 'create_checkout_session' 'pro' store.slug %}">Start Pro</a></p>
-        <p><a href="{% url 'create_checkout_session' 'enterprise' store.slug %}">Start Enterprise</a></p>
+        <p><a href="{% url 'create_checkout_session' 'basic' store.slug %}">Meridian Basic: £19</a></p>
+        <p><a href="{% url 'create_checkout_session' 'pro' store.slug %}">Meridian Pro: £39</a></p>
+        <p><a href="{% url 'create_checkout_session' 'enterprise' store.slug %}">Meridian Enterprise: £59</a></p>
     {% elif summary.tier == "basic" %}
         <p><a href="{% url 'change_plan' 'pro' %}">Upgrade to Pro</a></p>
         <p><a href="{% url 'change_plan' 'enterprise' %}">Upgrade to Enterprise</a></p>

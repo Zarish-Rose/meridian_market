@@ -14,28 +14,6 @@
 <p><strong>Company:</strong> {{ user.profile.company_name|default:"Not provided" }}</p>
 <p><strong>Phone:</strong> {{ user.profile.phone|default:"Not provided" }}</p>
 
-<div class="card profile-card">
-    <h3>Your Store QR Code</h3>
-
-    {% if store and store.qr_code %}
-        <img src="{{ store.qr_code.url }}" alt="QR Code" width="200" style="border-radius: 8px; margin-bottom: 10px;">
-
-        <a href="{% url 'download_qr' store.slug %}" class="btn btn-primary">
-            Download QR Code (PNG)
-        </a>
-    {% else %}
-        <p>No store or QR code available yet.</p>
-    {% endif %}
-</div>
-
-{% if store %}
-    <a href="{% url 'download_qr' store.slug %}?size=large" class="btn btn-secondary">
-        Download High-Resolution QR
-    </a>
-{% else %}
-    <p><a href="{% url 'create_store' %}">Create your first store</a></p>
-{% endif %}
-
 <hr>
 
 {% if subscription and subscription.is_active %}
@@ -43,18 +21,6 @@
 {% else %}
     <p>You do not have an active subscription.</p>
     <a href="{% url 'billing' %}" class="btn btn-primary">Upgrade Now</a>
-{% endif %}
-
-<h2>Choose Your Plan</h2>
-
-{% if store %}
-    <div class="plans">
-        <a href="{% url 'create_checkout_session' 'basic' store.slug %}" class="plan">Basic – GBP 19/mo</a>
-        <a href="{% url 'create_checkout_session' 'pro' store.slug %}" class="plan">Pro – GBP 39/mo</a>
-        <a href="{% url 'billing' %}" class="plan">Enterprise – GBP 59/mo Contact Us</a>
-    </div>
-{% else %}
-    <p>Create a store first to pick a plan.</p>
 {% endif %}
 
 <hr>

@@ -15,10 +15,12 @@
 		<p class="home-kicker">Commerce Ops, Reimagined</p>
 		<h2>Welcome to Meridian</h2>
 		<p class="home-lead">Manage your stores, subscribers, campaigns, and billing in one calm, connected workspace built for modern teams.</p>
+		{% if not user.is_authenticated %}
 		<div class="home-actions">
 			<a href="{% url 'register' %}" class="btn btn-primary">Create Account</a>
 			<a href="{% url 'login' %}" class="btn btn-ghost">Log In</a>
 		</div>
+		{% endif %}
 		<ul class="home-pillars" aria-label="Platform highlights">
 			<li>Store Management</li>
 			<li>Subscriber Growth</li>

@@ -1,5 +1,5 @@
 from .models import Store
-from .forms import StoreForm
+from .forms import StoreForm, StoreMemberForm
 from django.http import FileResponse, Http404, HttpResponse
 from .decorators import store_access_required
 from django.shortcuts import render, redirect
